@@ -57,4 +57,23 @@ public class ServerData {
 
     }
 
+    public static Words getLocation(String location){
+        String[] loc = location.split("\\."); //split location into 3 parts
+        Words word = new Words();
+
+        var request = HttpRequest.newBuilder().uri(URI.create("http://localhost:"
+                + App.getArgs()[6]+"/words/"+loc[0]+loc[1]+loc[2]+"/details.json")).build();
+
+        try{
+            // get the response object of class HttpResponse<String>
+            var response = client.send(request, BodyHandlers.ofString());
+
+            word = new Gson().fromJson(response.body(), Words.class);
+        }
+        catch (IOException | InterruptedException e){
+            e.printStackTrace();
+        }
+        return word;
+    }
+
 }

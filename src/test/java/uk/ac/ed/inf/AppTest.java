@@ -59,8 +59,8 @@ public class AppTest
 
 
     private boolean approxEq(LongLat l1, LongLat l2) {
-        return approxEq(l1.longitude, l2.longitude) &&
-                approxEq(l1.latitude, l2.latitude);
+        return approxEq(l1.lng, l2.lng) &&
+                approxEq(l1.lat, l2.lat);
     }
 
     @Test

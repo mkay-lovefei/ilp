@@ -6,10 +6,10 @@ package uk.ac.ed.inf;
 public class LongLat {
 
     /** Horizontal component of point */
-    public double longitude;
+    public double lng;
 
     /** Vertical component of point */
-    public double latitude;
+    public double lat;
 
     /**
      * Creates new point with specified horizontal and vertical components
@@ -17,8 +17,8 @@ public class LongLat {
      * @param latitude A double represent the specified vertical component of the point
      */
     public LongLat(double longitude, double latitude){
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.lng = longitude;
+        this.lat = latitude;
     }
 
     /**
@@ -26,8 +26,8 @@ public class LongLat {
      * @return True if the point is confined or False other wise
      */
     public boolean isConfined(){
-        boolean withinLongRange = longitude>-3.192473 && longitude<-3.184319;
-        boolean withinLatRange =  latitude>55.942617 && latitude<55.946233;
+        boolean withinLongRange = lng>-3.192473 && lng<-3.184319;
+        boolean withinLatRange =  lat>55.942617 && lat<55.946233;
         return withinLongRange && withinLatRange;
     }
 
@@ -37,10 +37,10 @@ public class LongLat {
      * @return A double representing the Pythagorean distance
      */
     public double distanceTo(LongLat point){
-        double x2 = point.longitude;
-        double y2 = point.latitude;
-        double squaredLongDifference = (x2-longitude)*(x2-longitude);
-        double squaredLatDifference = (y2-latitude)*(y2-latitude);
+        double x2 = point.lng;
+        double y2 = point.lat;
+        double squaredLongDifference = (x2-lng)*(x2-lng);
+        double squaredLatDifference = (y2-lat)*(y2-lat);
         double sumOfSquaredDifference = squaredLongDifference + squaredLatDifference;
 
         return Math.sqrt(sumOfSquaredDifference);
@@ -84,14 +84,14 @@ public class LongLat {
         //angle is converted to radians for a more accurate calculation
         double x = moveDistance*Math.cos(Math.toRadians(a));
         double y = moveDistance*Math.sin(Math.toRadians(a));
-        position.longitude += x;
-        position.latitude += y;
+        position.lng += x;
+        position.lat += y;
         return position;
     }
 
     public static void main (String[] args){
 
-        System.out.println(nextPosition(90).longitude +" "+ nextPosition(90).latitude);
+        System.out.println(nextPosition(90).lng +" "+ nextPosition(90).lat);
 
         }
 }
