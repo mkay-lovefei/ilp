@@ -1,5 +1,7 @@
 package uk.ac.ed.inf;
 
+import com.mapbox.geojson.Point;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.List;
  * Represents the items for sale in the shops participating in the drone delivery service
  */
 public class Menus {
+
+    WebServerData serverData = new WebServerData();
 
     /** name of shop */
     String name;
@@ -47,9 +51,9 @@ public class Menus {
      * and puts them in item name, item cost pairs
      * @return Map<String, Integer></String,> representing item name, item cost pairs
      */
-    public Map<String, Integer> menuItemList(){
+    public static Map<String, Integer> menuItemList(){
         Map<String,Integer> menuItems = new HashMap<>();
-        for(Menus shop : ServerData.retrievedMenus){
+        for(Menus shop : WebServerData.retrievedMenus){
             for (Menus.MenuItem menuItem : shop.menu){
                 menuItems.put(menuItem.item,menuItem.pence);
             }
@@ -64,7 +68,8 @@ public class Menus {
      * @param args A variable number of strings representing items to be delivered
      * @return An integer representing the total delivery cost in pence
      */
-    public int getDeliveryCost(String... args){
+    public static int getDeliveryCost(String... args){
+
         int cost = 50;
         for (String item : args){
             if(menuItemList().containsKey(item)){
@@ -72,5 +77,9 @@ public class Menus {
             }
         }
         return cost;
+    }
+
+    public Point getShopCoordinates(){
+        return serverData.getLocation(location);
     }
 }

@@ -5,17 +5,29 @@ public class Words {
     private String country;
     private Square square;
     private String nearestPlace;
-    private LongLat coordinates;
+    private LngLat coordinates;
     private String words;
     private String language;
     private String map;
 
-    private static class Square{
-        LongLat southwest;
-        LongLat northeast;
+    public static class LngLat{
+        private double lng;
+        private double lat;
+
+        public double getLng(){
+            return this.lng;
+        }
+        public double getLat(){
+            return this.lat;
+        }
     }
 
-    public LongLat getCoordinates(){
+    private static class Square{
+        LngLat southwest;
+        LngLat northeast;
+    }
+
+    public LngLat getCoordinates(){
         return this.coordinates;
     }
 

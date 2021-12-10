@@ -1,5 +1,8 @@
 package uk.ac.ed.inf;
 
+import java.sql.Date;
+import java.sql.SQLException;
+
 /**
  * Hello world!
  *
@@ -12,8 +15,18 @@ public class App
         return savedArgs;
     }
 
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+    public static Date getDate(){
+        String dateString = getArgs()[0] + "-" + getArgs()[1] + "-" +getArgs()[2];
+        return Date.valueOf(dateString);
+    }
+
+    public static void main( String[] args ) throws SQLException {
+
+        savedArgs = args;
+
+        Output output = new Output();
+        output.deliveriesTable();
+        output.flightPathTable();
+        output.createGeoJsonFile();
     }
 }

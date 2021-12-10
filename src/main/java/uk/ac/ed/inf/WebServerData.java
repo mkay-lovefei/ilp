@@ -11,11 +11,15 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
+import com.mapbox.geojson.Polygon;
 
 /**
  * Represents data retrieved from web server
  */
-public class ServerData {
+public class WebServerData {
 
     /** An HTTP client to be used for all communications with web server */
     private static final HttpClient client = HttpClient.newHttpClient();
@@ -23,12 +27,14 @@ public class ServerData {
     /** Menus data retrieved from web server */
     public static List<Menus> retrievedMenus = getMenus();
 
+
+
     /**
      * Gets information of items for sale and their respective shops from web server
      * @return List<Menus></Menus> representing a list of all information on items for sale
      */
     public static List<Menus> getMenus(){
-        Menus menus = new Menus("localhost", "9898");
+        Menus menus = new Menus("localhost", App.getArgs()[3]);
 
         //build http request and send to client
         // client assumes it is a GET request by default
@@ -57,7 +63,7 @@ public class ServerData {
 
     }
 
-    public static Words getLocation(String location){
+    public static Point getLocation(String location){
         String[] loc = location.split("\\."); //split location into 3 parts
         Words word = new Words();
 
@@ -73,7 +79,61 @@ public class ServerData {
         catch (IOException | InterruptedException e){
             e.printStackTrace();
         }
-        return word;
+       return Point.fromLngLat(word.getCoordinates().getLng(), word.getCoordinates().getLat());
     }
 
+    public ArrayList<String> getAllShopLocs(){
+        ArrayList<String> shopLocs = new ArrayList<>();
+        for (Menus menu : retrievedMenus){
+            String locCoords = menu.location;
+            shopLocs.add(locCoords);
+        }
+        return shopLocs;
+    }
+
+    static List<Polygon> getNoFlyZones(){
+        var noFlyZones = new ArrayList<Polygon>();
+
+        var request = HttpRequest.newBuilder().uri(URI.create("http://localhost:"
+                + App.getArgs()[6]+"/buildings/"+"/no-fly-zones.geojson")).build();
+
+        try{
+            // get the response object of class HttpResponse<String>
+            var response = client.send(request, BodyHandlers.ofString());
+
+            var featureCollection = FeatureCollection.fromJson(response.body());
+            var features = featureCollection.features();
+            for (Feature feature : features){
+                Polygon zone = (Polygon) feature.geometry();
+                noFlyZones.add(zone);
+            }
+        }
+        catch (IOException | InterruptedException e){
+            e.printStackTrace();
+        }
+        return noFlyZones;
+    }
+
+    static List<Point> getLandMarks(){
+        var landMarks = new ArrayList<Point>();
+
+        var request = HttpRequest.newBuilder().uri(URI.create("http://localhost:"
+                + App.getArgs()[6]+"/buildings/"+"/landmarks.geojson")).build();
+
+        try{
+            // get the response object of class HttpResponse<String>
+            var response = client.send(request, BodyHandlers.ofString());
+
+            var featureCollection = FeatureCollection.fromJson(response.body());
+            var features = featureCollection.features();
+            for (Feature feature : features){
+                Point landMark = (Point) feature.geometry();
+                landMarks.add(landMark);
+            }
+        }
+        catch (IOException | InterruptedException e){
+            e.printStackTrace();
+        }
+        return landMarks;
+    }
 }
