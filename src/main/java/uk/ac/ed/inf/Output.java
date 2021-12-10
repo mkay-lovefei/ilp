@@ -6,14 +6,25 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles the creation of the output databases, the insertion of their values and
+ * the writing of the output file
+ */
 public class Output {
 
+    /**A new DatabaseContent object from which the needed data will be retrieved*/
     DatabaseContent databaseContent = new DatabaseContent();
 
-    private void createDeliveriesTab() throws SQLException {
+
+    /**
+     * Creates a new table for recording information on a day's deliveries
+     * @throws SQLException
+     */
+    private void DeliveriesTab() throws SQLException {
         databaseContent.dropIfExists("deliveries");
         databaseContent.statement.execute(
                 "create table deliveries(" +
@@ -22,7 +33,14 @@ public class Output {
                         "costInPence int)" );
     }
 
-    public void deliveriesTable() throws SQLException {
+
+    /**
+     * Records all the order numbers, delivery locations and delivery costs of a days deliveries
+     * into the deliveries table
+     * @throws SQLException
+     * @throws ParseException
+     */
+    public void deliveriesTable() throws SQLException, ParseException {
         ArrayList<OutputInfo> outputInfos = Movement.moveDrone();
         PreparedStatement psOutputInfo = databaseContent.conn.prepareStatement(
                 "insert into deliveries values (?, ?, ?)" );
@@ -36,6 +54,10 @@ public class Output {
     }
 
 
+    /**
+     * Creates a new table for recording the behaviour of the drone's flight
+     * @throws SQLException
+     */
     public void flightPathTable() throws SQLException {
         databaseContent.dropIfExists("flightpath");
         databaseContent.statement.execute(
@@ -48,7 +70,15 @@ public class Output {
                         "toLatitude double)" );
     }
 
-    private void insertFlights() throws SQLException {
+
+    /**
+     * Records all the order number, initial position of drone, position of drone after move and
+     * the angle of the each move into the flightPath table
+     * into the deliveries table
+     * @throws SQLException
+     * @throws ParseException
+     */
+    private void insertFlights() throws SQLException, ParseException {
         List<OutputInfo> outputInfos = Movement.moveDrone();
         PreparedStatement psOutputInfo = databaseContent.conn.prepareStatement(
                 "insert into flightpath values (?, ?, ?, ?, ?, ?)" );
@@ -64,6 +94,13 @@ public class Output {
         }
     }
 
+    /**
+     * Creates the flightpath of the drone
+     * @param outputInfos Representing a list of all the OutputInfo objects that contain all the
+     *                    necessary details of a move
+     * @return FeatureCollection representing the flightpath of the drone
+     * @throws SQLException
+     */
     private FeatureCollection createFeatCollection (List<OutputInfo> outputInfos) throws SQLException {
         List<Feature> features = new ArrayList<>(1);
 
@@ -85,19 +122,20 @@ public class Output {
         return FeatureCollection.fromFeatures(features);
     }
 
+
+    /**
+     * Creates a GeoJSON file that contains a visual representation of the flightpath
+     */
     public void createGeoJsonFile(){
         try (FileWriter outputFile = new FileWriter(
                 "drone-" + App.getArgs()[0] + "-" + App.getArgs()[1] + "-" + App.getArgs()[2] + ".geojson")){
             outputFile.write(createFeatCollection(Movement.moveDrone()).toJson());
             outputFile.close();
             System.out.println("File created successfully");
-        } catch (SQLException | IOException throwables) {
+        } catch (SQLException | IOException | ParseException throwables) {
             System.out.println("An error occured!");
             throwables.printStackTrace();
         }
     }
-
-
-
 
 }

@@ -6,12 +6,24 @@ import com.mapbox.geojson.Polygon;
 
 import java.util.List;
 
+/**
+ * Represents the area of the flight
+ */
 public class Buildings {
 
+    /**Represents the areas the drone is not to touch*/
     public static List<Polygon> noFlyZones = WebServerData.getNoFlyZones();
 
+    /**Represents the Point the drone can travel to when it diverts from a noFlyZone*/
     public static List<Point> landMarks = WebServerData.getLandMarks();
 
+    /**
+     * Determines if three Points are collinear or not
+     * @param x Represents the first point
+     * @param y Represents the second point
+     * @param z Represents the third point
+     * @return int 1 means the points are collinear and 2 means they are not
+     */
     private static int findOrientation(Point x, Point y, Point z){
 
         double value = ((z.longitude() - y.longitude()))*(y.latitude()
@@ -22,6 +34,13 @@ public class Buildings {
         return (value >0.0) ? 1:2;
     }
 
+    /**
+     * Determines whether a point is on a line
+     * @param p Represents the point in question
+     * @param x Represents the first point of line xy
+     * @param y Represent the last point of line xy
+     * @return boolean True if p is on line xy
+     */
     public static boolean isOnLine(Point p, Point x, Point y){
 
         return (p.longitude() >= Math.min(x.longitude(), y.longitude())
@@ -30,6 +49,14 @@ public class Buildings {
                 && p.latitude() <= Math.max(x.latitude(), y.latitude()));
     }
 
+    /**
+     * Determines if two lines intersect
+     * @param x1 First point of line x1y1
+     * @param y1 Last point of line  x1y1
+     * @param x2 First point of line x2y2
+     * @param y2 Last point of line x2y2
+     * @return boolean true if lines x1y1 and x2y2 intersect
+     */
     private static boolean linesIntersect(Point x1, Point y1, Point x2, Point y2){
         // Find the four orientations needed for general and special cases
         int o1 = findOrientation(x1,y1,x2);
@@ -54,6 +81,13 @@ public class Buildings {
         return o4 == 0 && isOnLine(y1, x2, y2);
     }
 
+    /**
+     * Determines whether a line intersects a polygon
+     * @param x First point of line xy
+     * @param y Last point of line xy
+     * @param polygon Polygon in question
+     * @return boolean true if line xy intersects the perimeter of the polygon
+     */
     private static boolean lineIntersectsPolygon(Point x, Point y, Polygon polygon){
 
         LineString polygonPerimeter = polygon.outer();

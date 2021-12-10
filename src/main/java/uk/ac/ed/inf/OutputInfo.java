@@ -1,5 +1,8 @@
 package uk.ac.ed.inf;
 
+/**
+ * Represents the details of a move
+ */
 public class OutputInfo {
 
     private final String orderNo;
@@ -12,6 +15,18 @@ public class OutputInfo {
     private final double toLatitude;
 
 
+    /**
+     * Creates a new move with specified details
+     * @param orderNo Represents the order number of the order for which the move was made. Can be null
+     *                when the drone is returning to its initial position after all deliveries are done
+     * @param deliveredTo Represents the WhatThreeWords location of the delivery point of the order
+     * @param costInPence Represents the cost of the order and its delivery
+     * @param fromLongitude Represents the longitude of the point from which the move started
+     * @param fromLatitude Represents the latitude of the point from which the move started
+     * @param angle Represents the angle of the move
+     * @param toLongitude Represents the longitude of the point at which the move ended
+     * @param toLatitude Represents the latitude of the point at which the move ended
+     */
     public OutputInfo(String orderNo, String deliveredTo, int costInPence, double fromLongitude, double fromLatitude,
                       int angle, double toLongitude, double toLatitude){
         this.orderNo = orderNo;

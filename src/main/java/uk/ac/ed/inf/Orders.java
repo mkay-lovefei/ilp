@@ -6,25 +6,38 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Represents an order
+ * */
 public class Orders {
     DatabaseContent databaseInfo = new DatabaseContent();
     WebServerData serverData = new WebServerData();
-    Menus menus = new Menus("localhost", "9898");
 
+    /**A String that uniquely identifies the order*/
     String orderNo;
+    /**A String that uniquely identifies a person making an order*/
     String customer;
+    /**The items ordered in this order*/
     ArrayList<String> items;
     Date deliveryDate;
+    /**The WhatThreeWords location the order is to be delivered at*/
     String deliverTo;
     int costInPence;
 
-
+/**
+ * Creates a new order with a specified orderNumber and deliveryDate
+ * @param orderNumber A String that represents the order number of the order
+ * @param deliveryDate an SQL Date object that represents the delivery date of the order
+ */
     public Orders(String orderNumber, Date deliveryDate){
         this.orderNo = orderNumber;
         this.deliveryDate = deliveryDate;
     }
 
-
+/**
+ * Gets the cartesian Points representing the location of the shops this order is made from
+ * @return ArrayList<Point></Point> that represents the locations of the shops. May have one or two points.
+ * */
     public ArrayList<Point> findShopLocs(){
         ArrayList<Point> shops = new ArrayList<>(2);
         for (String i : items){
@@ -38,7 +51,10 @@ public class Orders {
         return shops;
     }
 
-    //get all visitable locations in a list
+    /**
+     * gets all visitable locations of an order
+     * @return ArrayList<Point></Point> Represents all the points the drone is to visit for an order
+     */
     public ArrayList<Point> getAllPoints() throws SQLException {
         ArrayList<Point> visitablePoints = new ArrayList<>();
         Point deliveryPoint = getDeliveryCoords();
@@ -51,21 +67,14 @@ public class Orders {
         return visitablePoints;
     }
 
+    /**
+     * Gets the cartesian coordinates that represent delivery location
+     * @return Point representing the location of the delivery location
+     */
     public Point getDeliveryCoords() throws SQLException {
         deliverTo = databaseInfo.getDeliveryLoc(deliveryDate, orderNo);
         return serverData.getLocation(deliverTo);
     }
 
-    public void setOrderItems() throws SQLException {
-        items = databaseInfo.getOrderItems(orderNo);
-    }
-
-    public void setCustomer() throws SQLException {
-        customer = databaseInfo.getCustomer(deliveryDate ,orderNo);
-    }
-
-    public void calcDeliveryCost(){
-        costInPence = menus.getDeliveryCost(String.valueOf(items));
-    }
 }
 

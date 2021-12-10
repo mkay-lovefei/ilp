@@ -59,16 +59,19 @@ public class WebServerData {
         return retrievedMenus;
     }
 
-    public static void main(String[] args){
 
-    }
-
+    /**
+     * Gets the corresponding cartesian Point of a WhatThreeWords location from the Words folder
+     * on the web server
+     * @param location Represents a WhatThreeWords location
+     * @return Point Represents the cartesian coordinates of the location
+     */
     public static Point getLocation(String location){
         String[] loc = location.split("\\."); //split location into 3 parts
         Words word = new Words();
 
         var request = HttpRequest.newBuilder().uri(URI.create("http://localhost:"
-                + App.getArgs()[6]+"/words/"+loc[0]+loc[1]+loc[2]+"/details.json")).build();
+                + App.getArgs()[3]+"/words/"+loc[0]+ "/" + loc[1] + "/" + loc[2]+"/details.json")).build();
 
         try{
             // get the response object of class HttpResponse<String>
@@ -82,15 +85,21 @@ public class WebServerData {
        return Point.fromLngLat(word.getCoordinates().getLng(), word.getCoordinates().getLat());
     }
 
-    public ArrayList<String> getAllShopLocs(){
+    /**public ArrayList<String> getAllShopLocs(){
         ArrayList<String> shopLocs = new ArrayList<>();
         for (Menus menu : retrievedMenus){
             String locCoords = menu.location;
             shopLocs.add(locCoords);
         }
         return shopLocs;
-    }
+    }*/
 
+
+    /**
+     * Gets the Polygons that represent the areas that the drone is not
+     * supposed to enter
+     * @return List<Polygon></Polygon> Represents the list of noFlyZone areas
+     */
     static List<Polygon> getNoFlyZones(){
         var noFlyZones = new ArrayList<Polygon>();
 
@@ -114,6 +123,11 @@ public class WebServerData {
         return noFlyZones;
     }
 
+
+    /**
+     * Gets all the landmarks that the drone could fly in case of a diversion
+     * @return List<Point></Point> Represents the list of the cartesian points of the landmarks
+     */
     static List<Point> getLandMarks(){
         var landMarks = new ArrayList<Point>();
 

@@ -4,16 +4,19 @@ import com.mapbox.geojson.Point;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.*;
 
 /**
- * Represents a point on a Cartesian plane
+ * Represents the movement of the drone
  */
 public class Movement {
 
+    /**A new instance of the data retrieved from the database server to access the class' non-static methods and fields*/
     static DatabaseContent databaseContent = new DatabaseContent();
+    /**A new instance of the data retrieved from the web server to access the class' non-static methods and fields */
     WebServerData serverData = new WebServerData();
-    int numOfMoves = 1500;
+
 
     /**
      * Checks if a given point is within the drone confinement area
@@ -199,7 +202,7 @@ public class Movement {
         return Point.fromLngLat(lastOutput.getToLongitude(), lastOutput.getToLatitude());
     }
 
-    public static ArrayList<OutputInfo> moveDrone() throws SQLException {
+    public static ArrayList<OutputInfo> moveDrone() throws SQLException, ParseException {
         Point droneStartPoint = Point.fromLngLat(-3.186874, 55.944494);
         ArrayList<OutputInfo> outputs = new ArrayList<>();
         Point currentPost = droneStartPoint;
